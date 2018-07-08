@@ -35,12 +35,27 @@ defmodule AddressBook.CLI do
       |> response(opts)
   end
 
-  defp response(people, [file: file, find: find] = opts) do
-    find
+  defp response(people, [file: _file, find: "total"]) do
+    people |> Enum.count
+  end
+
+  defp response(people, [file: _file, find: "oldest"]) do
+    people
+    |> Enum.sort_by(fn(person) -> Map.get(person, :age) end)
+    |> List.last
+    |> Map.get(:name)
+  end
+
+  defp response(people, [file: _file, find: "name", name: name]) do
+    "name"
+  end
+
+  defp response(people, [file: _file, find: "city", city: city]) do
+    "city"
   end
 
   defp to_person(person_tuple) do
     [name, age, city] = elem(person_tuple, 1)
-    %{name: name, age: age, city: city}
+    %{name: name, age: String.to_integer(age), city: city}
   end
 end
