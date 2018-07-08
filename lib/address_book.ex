@@ -25,14 +25,12 @@ defmodule AddressBook.CLI do
   end
 
   defp response(opts) do
-    # IO.inspect(opts) #[file: "people.csv", find: "oldest"]
-    people = 
-      opts[:file]
-      |> Path.expand("#{__DIR__}/../")
-      |> File.stream!
-      |> CSV.decode
-      |> Enum.map(&(to_person(&1)))
-      |> response(opts)
+    opts[:file]
+    |> Path.expand("#{__DIR__}/../")
+    |> File.stream!
+    |> CSV.decode
+    |> Enum.map(&(to_person(&1)))
+    |> response(opts)
   end
 
   defp response(people, [file: _file, find: "total"]) do
@@ -47,12 +45,18 @@ defmodule AddressBook.CLI do
   end
 
   defp response(people, [file: _file, find: "name", city: city]) do
-    ""
+    people
+    |> Enum.find(&(Map.get(&1, :city) == city))
+    |> Map.get(:name)
   end
 
   defp response(people, [file: _file, find: "city", name: name]) do
-    "city"
+    people
+    |> Enum.find(&(Map.get(&1, :name) == name))
+    |> Map.get(:name)
   end
+
+  defp response(_people, _opts), do: "Invalid options"
 
   defp to_person(person_tuple) do
     [name, age, city] = elem(person_tuple, 1)
