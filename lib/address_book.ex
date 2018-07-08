@@ -41,16 +41,16 @@ defmodule AddressBook.CLI do
 
   defp response(people, [file: _file, find: "oldest"]) do
     people
-    |> Enum.sort_by(fn(person) -> Map.get(person, :age) end)
+    |> Enum.sort_by(&Map.get(&1, :age))
     |> List.last
     |> Map.get(:name)
   end
 
-  defp response(people, [file: _file, find: "name", name: name]) do
-    "name"
+  defp response(people, [file: _file, find: "name", city: city]) do
+    ""
   end
 
-  defp response(people, [file: _file, find: "city", city: city]) do
+  defp response(people, [file: _file, find: "city", name: name]) do
     "city"
   end
 
