@@ -6,7 +6,6 @@ Example Elixir application that
 * Run an application as a CLI app
 * Accepts command line args and responds accordingly
 
-
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
@@ -25,14 +24,17 @@ and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/address_book](https://hexdocs.pm/address_book).
 
 
-## To run
+## Usage
 
 ```
 mix deps.get
 
 mix escript.build
 
-./address_book --file people.csv
+./address_book --file people.csv --find total
+./address_book --file people.csv --find oldest
+./address_book --file people.csv --find name --city Melbourne
+./address_book --file people.csv --find city --name Tom
 ```
 
 ## CSV Reader
