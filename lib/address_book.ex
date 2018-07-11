@@ -1,4 +1,4 @@
-defmodule AddressBook.CLI do
+defmodule AddressBook do
   @moduledoc """
   Elixir CLI app that reads a file and returns details
   """
@@ -11,10 +11,11 @@ defmodule AddressBook.CLI do
   $ ./address_book --file people.csv --find total
   """
   def main(args \\ []) do
-    args
-    |> parse_args
-    |> response
-    |> IO.puts()
+    result = args
+      |> parse_args
+      |> response
+    IO.puts(result)
+    result
   end
 
   defp parse_args(args) do
@@ -53,7 +54,7 @@ defmodule AddressBook.CLI do
   defp response(people, [file: _file, find: "city", name: name]) do
     people
     |> Enum.find(&(Map.get(&1, :name) == name))
-    |> Map.get(:name)
+    |> Map.get(:city)
   end
 
   defp response(_people, _opts), do: "Invalid options"

@@ -20,7 +20,7 @@ defmodule AddressBook.Mixfile do
   # end
 
   defp escript do
-    [main_module: AddressBook.CLI]
+    [main_module: AddressBook]
   end
 
   # Run "mix help deps" to learn about dependencies.
