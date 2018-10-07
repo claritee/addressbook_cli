@@ -30,27 +30,27 @@ defmodule AddressBook do
     |> File.stream!
     |> CSV.decode
     |> Enum.map(fn(item) -> to_person(item) end)
-    |> response_do(opts[:find], opts[:name], opts[:city])
+    |> response_do(opts)
   end
 
-  defp response_do(result, find, _name, _city) when find == "total" do
+  defp response_do(result, [file: _, find: "total"]) do
     Enum.count(result)
   end
 
-  defp response_do(result, find, _name, _city) when find == "oldest" do
+  defp response_do(result, [file: _, find: "oldest"]) do
     result
     |> Enum.sort_by(&Map.get(&1, :age))
     |> List.last
     |> Map.get(:name)
   end
 
-  defp response_do(result, find, name, city) when find == "name" do
+  defp response_do(result, [file: _, find: "name", city: city]) do
     result
     |> Enum.find(fn person -> person.city == city end)
     |> Map.get(:name)
   end
 
-  defp response_do(result, find, name, city) when find == "city" do
+  defp response_do(result, [file: _, find: "city", name: name]) do
     result
     |> Enum.find(fn person -> person.name == name end)
     |> Map.get(:city)
