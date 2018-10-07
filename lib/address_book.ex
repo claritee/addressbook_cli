@@ -25,39 +25,38 @@ defmodule AddressBook do
   end
 
   defp response(opts) do
-    result = opts[:file]
+    opts[:file]
     |> Path.expand("#{__DIR__}/../")
     |> File.stream!
     |> CSV.decode
     |> Enum.map(fn(item) -> to_person(item) end)
-
-    case opts[:find] do
-      "total" -> Enum.count(result)
-      "oldest" -> find_oldest(result)
-      "city" -> find_city(result, opts[:name])
-      "name" -> find_name(result, opts[:city])
-      _ -> nil
-    end
+    |> response_do(opts[:find], opts[:name], opts[:city])
   end
 
-  defp find_name(people, city) do
-    people
-    |> Enum.find(fn person -> person.city == city end)
-    |> Map.get(:name)
+  defp response_do(result, find, _name, _city) when find == "total" do
+    Enum.count(result)
   end
 
-  defp find_city(people, name) do
-    people
-    |> Enum.find(fn person -> person.name == name end)
-    |> Map.get(:city)
-  end
-
-  defp find_oldest(people) do
-    people
+  defp response_do(result, find, _name, _city) when find == "oldest" do
+    result
     |> Enum.sort_by(&Map.get(&1, :age))
     |> List.last
     |> Map.get(:name)
   end
+
+  defp response_do(result, find, name, city) when find == "name" do
+    result
+    |> Enum.find(fn person -> person.city == city end)
+    |> Map.get(:name)
+  end
+
+  defp response_do(result, find, name, city) when find == "city" do
+    result
+    |> Enum.find(fn person -> person.name == name end)
+    |> Map.get(:city)
+  end
+
+  defp response_do(_result, _find, _name, _city), do: nil
 
   defp to_person(person_tuple) do
     [name, age, city] = elem(person_tuple, 1)
