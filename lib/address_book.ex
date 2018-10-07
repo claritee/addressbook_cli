@@ -35,7 +35,7 @@ defmodule AddressBook do
   end
 
   defp response(people, [file: _file, find: "total"]) do
-    people |> Enum.count
+    Enum.count(people)
   end
 
   defp response(people, [file: _file, find: "oldest"]) do
