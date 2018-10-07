@@ -11,6 +11,56 @@ defmodule AddressBook do
   $ ./address_book --file people.csv --find total
   """
   def main(args \\ []) do
-    IO.puts(args)
+    result =
+      args
+      |> parse_args
+      |> response
+    IO.inspect(result)
+    result
+  end
+
+  defp parse_args(args) do
+    {opts, _word, _} = OptionParser.parse(args, switches: [upcase: :boolean])
+    opts
+  end
+
+  defp response(opts) do
+    result = opts[:file]
+    |> Path.expand("#{__DIR__}/../")
+    |> File.stream!
+    |> CSV.decode
+    |> Enum.map(fn(item) -> to_person(item) end)
+
+    case opts[:find] do
+      "total" -> Enum.count(result)
+      "oldest" -> find_oldest(result)
+      "city" -> find_city(result, opts[:name])
+      "name" -> find_name(result, opts[:city])
+      _ -> nil
+    end
+  end
+
+  defp find_name(people, city) do
+    people
+    |> Enum.find(fn person -> person.city == city end)
+    |> Map.get(:name)
+  end
+
+  defp find_city(people, name) do
+    people
+    |> Enum.find(fn person -> person.name == name end)
+    |> Map.get(:city)
+  end
+
+  defp find_oldest(people) do
+    people
+    |> Enum.sort_by(&Map.get(&1, :age))
+    |> List.last
+    |> Map.get(:name)
+  end
+
+  defp to_person(person_tuple) do
+    [name, age, city] = elem(person_tuple, 1)
+    %{name: name, age: String.to_integer(age), city: city}
   end
 end
